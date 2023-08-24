@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:math' as math;
 import 'package:geocoding/geocoding.dart';
@@ -16,8 +15,6 @@ import 'package:get/get.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 import '../../controller/general_controller.dart';
-import '../../utils/colors.dart';
-import '../../widgets/custom_dialog.dart';
 import 'state.dart';
 
 class SignUpLogic extends GetxController {
@@ -72,7 +69,7 @@ class SignUpLogic extends GetxController {
   }
 
   Future<firebase_storage.UploadTask?> uploadFile(
-    File? file,
+    // File? file,
     BuildContext context, {
     bool isYourImage = false,
     bool isIdFront = false,
@@ -80,7 +77,7 @@ class SignUpLogic extends GetxController {
     bool isShop1 = false,
     bool isShop2 = false,
   }) async {
-    if (file == null) {
+    if (profile == null) {
       Get.find<GeneralController>().updateFormLoader(false);
 
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -96,27 +93,31 @@ class SignUpLogic extends GetxController {
         "1${DateTime.now().millisecondsSinceEpoch.toString()}.jpg";
     firebase_storage.Reference ref =
         firebase_storage.FirebaseStorage.instance.ref().child(pictureReference);
-    uploadTask = ref.putFile(file);
+    uploadTask = ref.putFile(profile!);
 
     if (isYourImage) {
       downloadURL = await (await uploadTask).ref.getDownloadURL();
       log('URL---->>$downloadURL');
-    } else if (isIdFront) {
+    }
+    if (isIdFront) {
       // uploadTask = ref.putFile(fileIdFront!);
 
       imageUrlIdFrontImage = await (await uploadTask).ref.getDownloadURL();
       log('URL---->>$imageUrlIdFrontImage');
-    } else if (isIdBack) {
+    }
+    if (isIdBack) {
       // uploadTask = ref.putFile(fileIdBack!);
 
       imageUrlIdBackImage = await (await uploadTask).ref.getDownloadURL();
       log('URL---->>$imageUrlIdBackImage');
-    } else if (isShop1) {
+    }
+    if (isShop1) {
       // uploadTask = ref.putFile(fileShopImage1!);
 
       imageUrlShopImage1 = await (await uploadTask).ref.getDownloadURL();
       log('URL---->>$imageUrlShopImage1');
-    } else if (isShop2) {
+    }
+    if (isShop2) {
       // uploadTask = ref.putFile(fileShopImage2!);
 
       imageUrlShopImage2 = await (await uploadTask).ref.getDownloadURL();
@@ -137,68 +138,6 @@ class SignUpLogic extends GetxController {
 
   ///------------------------------------OTP----START-----------------
   String? phoneNumber;
-
-  String? phoneOtp;
-  String? verificationIDForVerify;
-  Future<bool?> otpFunction(String? phone, BuildContext context) async {
-    log('-----------------OtpFunctionStartHere-----------------');
-    FirebaseAuth _auth = FirebaseAuth.instance;
-    _auth.verifyPhoneNumber(
-      phoneNumber: phone!,
-      timeout: const Duration(seconds: 55),
-      verificationCompleted: (AuthCredential credential) async {
-        log('Credential from verificationCompleted ---->> $credential');
-      },
-      verificationFailed: (FirebaseAuthException exception) {
-        log('Exception ---->> ${exception.message}');
-      },
-      codeSent: (String? verificationId, [int? forceResendingToken]) {
-        verificationIDForVerify = verificationId;
-        log('verificationId ---->> $verificationId');
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {},
-    );
-    return null;
-  }
-
-  verifyOTP(BuildContext context, var otp) async {
-    log('--------------VerifyOtpStartsHere--------------');
-    try {
-      AuthCredential credential = PhoneAuthProvider.credential(
-        verificationId: verificationIDForVerify!,
-        smsCode: otp,
-      );
-
-      await uploadFile(profile, context, isYourImage: true);
-      await uploadFile(fileIdFront, context, isIdFront: true);
-      await uploadFile(fileIdBack, context, isIdBack: true);
-      await uploadFile(fileShopImage1, context, isShop1: true);
-      await uploadFile(fileShopImage2, context, isShop2: true);
-      if (!await Get.find<GeneralController>()
-          .firebaseAuthentication
-          .signUp()) {
-        return null;
-      }
-      log('Credential ---->> $credential');
-    } catch (e) {
-      Get.find<GeneralController>().updateFormLoader(false);
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return CustomDialogBox(
-              title: 'FAILED!',
-              titleColor: customDialogErrorColor,
-              descriptions: 'Incorrect OTP',
-              text: 'Ok',
-              functionCall: () {
-                Navigator.pop(context);
-              },
-              img: 'assets/dialog_error.svg',
-            );
-          });
-      log('Exception --->> $e');
-    }
-  }
 
   ///------------------------------------OTP----END-----------------
 
@@ -399,5 +338,4 @@ class SignUpLogic extends GetxController {
   }
 
   ///------------------------------------MAP-DATA----END-----------------
-
 }

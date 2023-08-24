@@ -68,7 +68,7 @@ class FirebaseAuthentication {
   }
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  Future<bool> signUp() async {
+  Future<bool> signUp(BuildContext context) async {
     try {
       Get.find<SignUpLogic>().nameController.text = Get.find<SignUpLogic>()
           .nameController
@@ -80,9 +80,21 @@ class FirebaseAuthentication {
           .createUserWithEmailAndPassword(
               email: Get.find<SignUpLogic>().emailController.text,
               password: Get.find<SignUpLogic>().passwordController.text)
-          .then((user) {
+          .then((user) async {
+        var signuplogic = Get.find<SignUpLogic>();
+        await signuplogic.uploadFile(context,
+            isIdBack: true,
+            isIdFront: true,
+            isShop1: true,
+            isShop2: true,
+            isYourImage: true);
+        // await uploadFile(profile!, context, isYourImage: true);
+        // await uploadFile(fileIdFront, context, isIdFront: true);
+        // await uploadFile(fileIdBack, context, isIdBack: true);
+        // await uploadFile(fileShopImage1, context, isShop1: true);
+        // await uploadFile(fileShopImage2, context, isShop2: true);
         Get.find<GeneralController>().boxStorage.write('uid', user.user!.uid);
-        _firestore.collection('users').doc(user.user!.uid).set({
+        await _firestore.collection('users').doc(user.user!.uid).set({
           'name': Get.find<SignUpLogic>().ownerNameController.text,
           'phone': Get.find<SignUpLogic>().phoneNumber,
           'email': Get.find<SignUpLogic>().emailController.text,
@@ -90,7 +102,7 @@ class FirebaseAuthentication {
           'image': Get.find<SignUpLogic>().downloadURL,
           'uid': user.user!.uid,
         });
-        _firestore.collection('shop').doc(user.user!.uid).set({
+        await _firestore.collection('shop').doc(user.user!.uid).set({
           'name': Get.find<SignUpLogic>().nameController.text,
           'phone': Get.find<SignUpLogic>().phoneNumber,
           'email': Get.find<SignUpLogic>().emailController.text,

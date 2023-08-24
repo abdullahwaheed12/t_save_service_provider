@@ -6,13 +6,11 @@ import 'modules/home/view.dart';
 import 'modules/login/view.dart';
 import 'modules/profile/view.dart';
 import 'modules/sign_up/view.dart';
-import 'modules/sign_up/view_phone_login.dart';
 import 'modules/splash/view.dart';
 
 routes() => [
       GetPage(name: "/splash", page: () => const SplashPage()),
       GetPage(name: "/login", page: () => const LoginPage()),
-      GetPage(name: "/phoneLogin", page: () => const PhoneLoginView()),
       GetPage(name: "/signUp", page: () => const SignUpPage()),
       GetPage(name: "/home", page: () => const HomePage()),
       GetPage(name: "/profile", page: () => const ProfilePage()),
@@ -23,7 +21,6 @@ routes() => [
 class PageRoutes {
   static const String splash = '/splash';
   static const String login = '/login';
-  static const String phoneLogin = '/phoneLogin';
   static const String signUp = '/signUp';
   static const String home = '/home';
   static const String orderDetail = '/orderDetail';

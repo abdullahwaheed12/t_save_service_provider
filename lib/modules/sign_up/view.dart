@@ -12,7 +12,6 @@ import 'package:image_picker_gallery_camera/image_picker_gallery_camera.dart';
 import 'package:intl/intl.dart' as intl;
 
 import '../../controller/general_controller.dart';
-import '../../route_generator.dart';
 import '../../utils/colors.dart';
 import '../../widgets/custom_dialog.dart';
 
@@ -28,7 +27,7 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  final SignUpLogic logic =  Get.find<SignUpLogic>();
+  final SignUpLogic logic = Get.find<SignUpLogic>();
   final SignUpState state = Get.find<SignUpLogic>().state;
 
   final GlobalKey<FormState> _signUpFormKey = GlobalKey<FormState>();
@@ -122,8 +121,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                     width:
                                         MediaQuery.of(context).size.width * .2,
                                     decoration: BoxDecoration(
-                                        color: customTextColor
-                                            .withOpacity(0.2),
+                                        color: customTextColor.withOpacity(0.2),
                                         borderRadius:
                                             BorderRadius.circular(10)),
                                     child: _signUpLogic.fileIdBack != null
@@ -160,8 +158,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                     width:
                                         MediaQuery.of(context).size.width * .2,
                                     decoration: BoxDecoration(
-                                        color: customTextColor
-                                            .withOpacity(0.2),
+                                        color: customTextColor.withOpacity(0.2),
                                         borderRadius:
                                             BorderRadius.circular(10)),
                                     child: _signUpLogic.fileIdFront != null
@@ -208,8 +205,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                     width:
                                         MediaQuery.of(context).size.width * .2,
                                     decoration: BoxDecoration(
-                                        color: customTextColor
-                                            .withOpacity(0.2),
+                                        color: customTextColor.withOpacity(0.2),
                                         borderRadius:
                                             BorderRadius.circular(10)),
                                     child: _signUpLogic.fileShopImage1 != null
@@ -246,8 +242,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                     width:
                                         MediaQuery.of(context).size.width * .2,
                                     decoration: BoxDecoration(
-                                        color: customTextColor
-                                            .withOpacity(0.2),
+                                        color: customTextColor.withOpacity(0.2),
                                         borderRadius:
                                             BorderRadius.circular(10)),
                                     child: _signUpLogic.fileShopImage2 != null
@@ -303,7 +298,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                 width: 8,
                               ),
                               Text('Select Service:'),
-                               SizedBox(
+                              SizedBox(
                                 width: 8,
                               ),
                               DropdownButton(
@@ -711,9 +706,20 @@ class _SignUpPageState extends State<SignUpPage> {
                             onTap: () async {
                               _generalController.focusOut(context);
                               if (_signUpFormKey.currentState!.validate()) {
-                        
-                                if (_signUpLogic.profile != null && _signUpLogic.fileIdBack != null && _signUpLogic.fileIdFront != null && _signUpLogic.fileShopImage1 != null && _signUpLogic.fileShopImage2 != null ) {
-                                  Get.toNamed(PageRoutes.phoneLogin);
+                                if (_signUpLogic.profile != null &&
+                                    _signUpLogic.fileIdBack != null &&
+                                    _signUpLogic.fileIdFront != null &&
+                                    _signUpLogic.fileShopImage1 != null &&
+                                    _signUpLogic.fileShopImage2 != null) {
+                                  // Get.toNamed(PageRoutes.phoneLogin);
+                                  await Get.find<GeneralController>()
+                                      .updateFormLoader(true);
+                                  await Get.find<GeneralController>()
+                                      .firebaseAuthentication
+                                      .signUp(context);
+
+                                  await Get.find<GeneralController>()
+                                      .updateFormLoader(false);
                                 } else {
                                   showDialog(
                                       context: context,
@@ -722,8 +728,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                         return CustomDialogBox(
                                           title: 'FAILED!',
                                           titleColor: customDialogErrorColor,
-                                          descriptions:
-                                              'Please Upload Image',
+                                          descriptions: 'Please Upload Image',
                                           text: 'Ok',
                                           functionCall: () {
                                             Navigator.pop(context);
@@ -843,7 +848,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     "Camera",
                     style: Theme.of(context)
                         .textTheme
-                        .headline5!
+                        .headlineSmall!
                         .copyWith(fontSize: 18),
                   )),
               CupertinoDialogAction(
@@ -885,7 +890,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     "Gallery",
                     style: Theme.of(context)
                         .textTheme
-                        .headline5!
+                        .headlineSmall!
                         .copyWith(fontSize: 18),
                   )),
             ],
